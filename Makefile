@@ -39,9 +39,9 @@ GOFILES := $(shell $(GOCMD) run tools$/lister$/main.go)
 
 all: test build package
 
-GOOS_ARCHS = linux/amd64 linux/arm64 linux/ppc64le linux/s390x
+GOOS_ARCHS = freebsd/amd64 freebsd/arm64 linux/amd64 linux/arm64 linux/ppc64le linux/s390x
 
-build: build-linux-amd64 build-linux-arm64 build-windows-amd64 build-linux-ppc64le build-linux-s390x
+build: build-freebsd-amd64 build-freebsd-arm64 build-linux-amd64 build-linux-arm64 build-windows-amd64 build-linux-ppc64le build-linux-s390x
 
 build-windows-amd64: build-windows-amd64-lifecycle build-windows-amd64-symlinks build-windows-amd64-launcher
 
