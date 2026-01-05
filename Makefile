@@ -38,7 +38,7 @@ GOFILES := $(shell $(GOCMD) run tools$/lister$/main.go)
 
 all: test build package
 
-GOOS_ARCHS = linux/amd64 linux/arm64 linux/ppc64le linux/s390x darwin/amd64 darwin/arm64
+GOOS_ARCHS = linux/amd64 linux/arm64 linux/ppc64le linux/s390x darwin/amd64 darwin/arm64 freebsd/amd64
 
 build: build-linux-amd64 build-linux-arm64 build-linux-ppc64le build-linux-s390x
 
@@ -61,6 +61,11 @@ build-image-linux-s390x: build-linux-s390x package-linux-s390x
 build-image-linux-s390x: ARCHIVE_PATH=$(BUILD_DIR)/lifecycle-v$(LIFECYCLE_VERSION)+linux.s390x.tgz
 build-image-linux-s390x:
 	$(GOCMD) run ./tools/image/main.go -daemon -lifecyclePath $(ARCHIVE_PATH) -os linux -arch s390x -tag lifecycle:$(LIFECYCLE_IMAGE_TAG)
+
+build-image-freebsd-amd64: build-freebsd-amd64 package-freebsd-amd64
+build-image-freebsd-amd64: ARCHIVE_PATH=$(BUILD_DIR)/lifecycle-v$(LIFECYCLE_VERSION)+freebsd.amd64.tgz
+build-image-freebsd-amd64:
+	$(GOCMD) run ./tools/image/main.go -daemon -lifecyclePath $(ARCHIVE_PATH) -os freebsd -arch amd64 -tag docker.io/gogolok/cnbs-lifecycle:0
 
 define build_targets
 build-$(1)-$(2): build-$(1)-$(2)-lifecycle build-$(1)-$(2)-symlinks build-$(1)-$(2)-launcher
@@ -242,3 +247,13 @@ package-linux-s390x: PACKAGER=./tools/packager/main.go
 package-linux-s390x:
 	@echo "> Packaging lifecycle for $(GOOS)/$(GOARCH)..."
 	$(GOCMD) run $(PACKAGER) --inputDir $(INPUT_DIR) -archivePath $(ARCHIVE_PATH) -descriptorPath $(LIFECYCLE_DESCRIPTOR_PATH) -version $(LIFECYCLE_VERSION)
+
+package-freebsd-amd64: GOOS:=freebsd
+package-freebsd-amd64: GOARCH:=amd64
+package-freebsd-amd64: INPUT_DIR:=$(BUILD_DIR)/$(GOOS)-$(GOARCH)/lifecycle
+package-freebsd-amd64: ARCHIVE_PATH=$(BUILD_DIR)/lifecycle-v$(LIFECYCLE_VERSION)+$(GOOS).amd64.tgz
+package-freebsd-amd64: PACKAGER=./tools/packager/main.go
+package-freebsd-amd64:
+	@echo "> Packaging lifecycle for $(GOOS)/$(GOARCH)..."
+	$(GOCMD) run $(PACKAGER) --inputDir $(INPUT_DIR) -archivePath $(ARCHIVE_PATH) -descriptorPath $(LIFECYCLE_DESCRIPTOR_PATH) -version $(LIFECYCLE_VERSION)
+

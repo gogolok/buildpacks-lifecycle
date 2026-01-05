@@ -124,6 +124,7 @@ func (c *createCmd) Exec() error {
 		plan       files.Plan
 	)
 	cmd.DefaultLogger.Phase("ANALYZING")
+	fmt.Printf("XXX ANALYZING 0\n")
 	analyzerFactory := phase.NewConnectedFactory(
 		c.PlatformAPI,
 		&cmd.BuildpackAPIVerifier{},

@@ -26,7 +26,7 @@ import (
 )
 
 const (
-	linuxBaseImage = "gcr.io/distroless/static"
+	defaultBaseImage = "docker.io/gogolok/freebsd-static-15-0"
 )
 
 // commandline flags
@@ -62,7 +62,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	baseImage := linuxBaseImage
+	baseImage := defaultBaseImage
 
 	var img imgutil.Image
 	if useDaemon {
